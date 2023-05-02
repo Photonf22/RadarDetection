@@ -37,7 +37,9 @@ wav= c/fc;            % wavelength of carrier signal
 B_sweep= c /(2*range_resolution);
 
 Slope =B_sweep/Tchirp ;   %Slope (slope) of the FMCW
-
+disp(Slope)
+disp(B_sweep)
+disp(Tchirp)
 %The number of chirps in one sequence. Its ideal to have 2^ value for the ease of running the FFT
 %for Doppler Estimation. 
 Nd=128;                   % #of doppler cells OR #of sent periods % number of chirps
@@ -163,10 +165,10 @@ figure,surf(doppler_axis,range_axis,RDM);
 
 % *%TODO* :
 %Select the number of Training Cells in both the dimensions.
-Tr=8;
-Td=4;
-Gr=4;
-Gd=4;
+Tr=11;
+Td=9;
+Gr=5;
+Gd=3;
 Grid_size= (2*Tr+2*Gr+1)*(2*Td+2*Gd+1);
 T =  (2*Tr+2*Gr+1)*(2*Td+2*Gd+1) - (2*Gr+1)*(2*Gr+1);
 % *%TODO* :
@@ -205,6 +207,11 @@ for i = Td+Gd+1:m-(Gd+Td)
             end
         threshold= pow2db(noise_level/(2*(Td+Gd+1)*2*(Tr+Gr+1)-(Gr*Gd)-1));
         threshold= threshold + offset;
+% *%TODO* :
+% The process above will generate a thresholded block, which is smaller 
+%than the Range Doppler Map as the CUT cannot be located at the edges of
+%matrix. Hence,few cells will not be thresholded. To keep the map size same
+% set those values to 0. 
         CUT=RDM(i,j);        
         if(CUT < threshold)
             CFAR(i,j) = 0;
@@ -215,24 +222,6 @@ for i = Td+Gd+1:m-(Gd+Td)
 end
    % Use RDM[x,y] as the matrix from the output of 2D FFT for implementing
    % CFAR
-
-
-
-
-
-% *%TODO* :
-% The process above will generate a thresholded block, which is smaller 
-%than the Range Doppler Map as the CUT cannot be located at the edges of
-%matrix. Hence,few cells will not be thresholded. To keep the map size same
-% set those values to 0. 
- 
-
-
-
-
-
-
-
 
 % *%TODO* :
 %display the CFAR output using the Surf function like we did for Range
